@@ -114,26 +114,89 @@ bool subsecuencia(string s1, string s2) {
 vector<vector<string> > agruparAnagramas(vector<string> v){
 
 	vector<vector<string>> vResult;
+	vector<string> vGrupo;
+	int g;
 
-	if(v.size() > 0){
 
+	vGrupo.push_back(v[0]);
+	vResult.push_back(vGrupo);
+	vGrupo.clear();
+
+
+	for(int i = 1; i < v.size(); i++){
+		g = 0;
+		while(g < vResult.size() && !anagramas(vResult[g][0], v[i])){
+			g++;
+		}
+
+		if(g < vResult.size()){
+			vResult[g].push_back(v[i]);
+		}else{
+			vGrupo.push_back(v[i]);
+			vResult.push_back(vGrupo);
+			vGrupo.clear();
+		}
 	}
 
-	return {};
+
+	return vResult;
 }
 
 bool esPalindromo(string s){
-	return true;
+
+	int i = 0;
+
+	while(i < s.size()/2 && s[i] == s[s.size()-1-i]){
+		i++;
+	}
+
+	return (i == s.size()/2);
 }
 
 bool tieneRepetidos(string s){
-	return true;
+
+	int i = 0;
+
+	while(i < s.size() && cantApariciones(s[i], s) == 1){
+		i++;
+	}
+
+	return (i < s.size());
 }
 
 string rotar(string s, int j){
-	return "";
+
+	string sAux = s;
+	int newPos;
+
+	for(int i = 0; i < s.size(); i++){
+		newPos = (j+i) % s.size();
+		sAux[newPos] = s[i];
+	}
+
+	return sAux;
 }
 
 string darVueltaK(string s, int k){
-	return "";
+
+	string sResult;
+	string word;
+	int c = 0; // Cantidad de grupos de k elementos dados vuelta
+
+	while(k*c + k < s.size()){
+		for(int l = k*c; l < k*c + k; l++){
+			word.push_back(s[l]);
+		}
+		sResult += darVuelta(word);
+		word.clear();
+		c++;
+	}
+
+	for(int l = k*c; l < s.size(); l++){
+		word.push_back(s[l]);
+	}
+
+	sResult += darVuelta(word);
+
+	return sResult;
 }
