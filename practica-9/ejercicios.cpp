@@ -195,7 +195,7 @@ int consecutivosDesde(vector<int> v, int &desde){
 	int consecutivos = 1;
 
 	desde++;
-	while(desde < v.size() && v[desde - 1] == v[desde]){
+	while(desde < v.size() && v[desde - 1] + 1 == v[desde]){
 		consecutivos++;
 		desde++;
 	}
