@@ -1,0 +1,276 @@
+\documentclass[a4paper]{article} 
+
+\setlength{\parskip}{0.1em}
+\input{Algo1Macros}
+\usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
+
+\begin{document}
+
+\titulo{TP de Especificaci\'on}
+\subtitulo{Sudoku}
+\fecha{24 de Abril de 2017}
+\materia{Algoritmos y Estructuras de Datos I}
+\grupo{Grupo 5}
+
+\integrante{Caballero, Tomás Leonel}{628/15}{tomycaballero95@gmail.com}
+\integrante{Farias, Dante Ezequiel}{365/15}{dantecuervo94@hotmail.com}
+\integrante{Latronico, Joaquin Ignacio}{484/16}{ignacio.latronico96@gmail.com}
+\integrante{Sittner, Daiana Natasha}{630/15}{daiana.sittner@hotmail.com}
+
+\maketitle
+
+\section{Problemas}
+
+\begin{enumerate}
+ 
+\item 
+
+\begin{especificacion}{sudoku\_esTableroValido}{\In t: \matriz{\ent}, \Out result: \bool}{}{}
+    \pre{\True}
+    \post{result = esTableroValido(t)}
+\end{especificacion}
+
+\item
+
+\begin{especificacion}{sudoku\_esCeldaVacia}{\In t: \matriz{\ent}, \In f: \ent, \In c: \ent, \Out result: \bool}{}{}
+    \pre{esTableroValido (t) \land (0 \leq f < 9) \land (0 \leq c < 9)}
+    \post{result = (t[f][c] = 0)}
+\end{especificacion}
+
+\item
+
+\begin{especificacion}{sudoku\_nroDeCeldasVacias}{\In t: \matriz{\ent}, \Out result: \ent}{}{}
+    \pre{esTableroValido (t)}
+    \post{result = cantCeldasVacias (t)}
+\end{especificacion}
+
+\item
+
+\begin{especificacion}{sudoku\_primeraCeldaVaciaFila}{\In t: \matriz{\ent}, \Out result: \ent}
+    \pre{esTableroValido (t)}
+    \postLargo{ 
+            (cantCeldasVacias(t)=0 \land result=-1) \lor \\
+            ((0 \leq result < 9) \yLuego (0 \in t[result]) \land (\forall \ f: \ent)(0 \leq f < result \implicaLuego \neg(0 \in t[f]))
+    }
+\end{especificacion}
+
+\item
+
+\begin{especificacion}{sudoku\_primeraCeldaVaciaColumna}{\In t: \matriz{\ent}, \Out  result: \ent}
+    \pre{esTableroValido(t)}
+    \postLargo{ 
+        (cantCeldasVacias (t) = 0 \land result = -1) \lor \\
+        ((0 \leq result < 9) \yLuego (\exists \ f_0 : \ent) ((0 \leq f_0 < 9) \yLuego (t[f_0][result] = 0) \land \\
+        (\forall \ f_1 : \ent) (0 \leq f_1 \leq f_0 \rightarrow (\forall \ c : \ent) ((f_1 = f_0 \land 0 \leq c < result) \lor (f_0 \neq f_1 \land 0 \leq c < 9) \implicaLuego t[f_1][c] \neq 0))))  
+    }
+\end{especificacion} 
+
+\item
+
+\begin{especificacion}{sudoku\_valorEnCelda}{\In t: \matriz{\ent}, \In f: \ent, \In c : \ent, \Out  result: \ent}{}{}
+    \pre{esTableroValido(t) \land (0 \leq f < 9) \land (0 \leq c < 9) \yLuego (t[f][c] \neq 0)}
+    \post{result = t[f][c]}
+\end{especificacion} 
+
+\item
+
+\begin{especificacion}{sudoku\_llenarCelda}{\Inout t: \matriz{\ent}, \In f: \ent, \In c : \ent, \In  value: \ent}
+    \pre{esTableroValido(t) \land (0 \leq f < 9) \land (0 \leq c < 9) \land (1 \leq value \leq 9) \land (t_0 = t) \yLuego (t[f][c] = 0)}
+    \postLargo{ 
+        esTableroValido(t) \yLuego (t[f][c] = value) \land \\ 
+        (\forall \ f_0 : \ent) (0 \leq f_0 < 9 \rightarrow (\forall \ c_0 : \ent) (0 \leq c_0 < 9 \implicaLuego ((f_0 = f \land c_0 = c) \lor t[f_0][c_0] = t_0[f_0][c_0])))
+    }
+\end{especificacion} 
+
+\newpage
+
+\item
+
+\begin{especificacion}{sudoku\_vaciarCelda}{\Inout t: \matriz{\ent}, \In f: \ent, \In c : \ent}{}{}
+    \pre{ esTableroValido(t) \land (0 \leq f < 9) \land (0 \leq c < 9) \land (t_0 = t) \yLuego (t[f][c] \neq 0)}
+    \postLargo{ 
+        esTableroValido(t) \yLuego (t[f][c] = 0) \land \\
+        (\forall \ f_0 : \ent) (0 \leq f_0 < 9 \rightarrow (\forall \ c_0 : \ent) (0 \leq c_0 < 9 \implicaLuego ((f_0 = f \land c_0 = c) \lor t[f_0][c_0] = t_0[f_0][c_0])))
+    }
+\end{especificacion} 
+
+\item
+
+\begin{especificacion}{sudoku\_esTableroParcialmenteResuelto}{\In t: \matriz{\ent}, \Out result: \bool}
+    \pre{esTableroValido(t)}
+    \post{result = tableroSinRepetidos(t)}
+\end{especificacion}
+
+\item
+
+\begin{especificacion}{sudoku\_esTableroTotalmenteResuelto}{\In t: \matriz{\ent}, \Out result: \bool}
+    \pre{esTableroValido(t)}
+    \post{result = esTotalmenteResuelto(t)}
+\end{especificacion} 
+
+\item
+
+\begin{especificacion}{sudoku\_esSubTablero}{\In \subind{t_0,t_1}: \matriz{\ent}, \Out result: \bool}{}{}
+    \pre{esTableroValido(t_0) \land esTableroValido(t_1)}
+    \post{result = esSubTablero(t_0,t_1)}
+\end{especificacion} 
+
+\item
+
+\begin{especificacion}{sudoku\_tieneSolucion}{\In t: \matriz{\ent}, \Out tieneSolucion: \bool}{}{}
+    \pre{esTableroValido(t)}
+    \post{tieneSolucion=tableroTieneSolucion(t)}
+\end{especificacion} 
+            
+\item
+
+\begin{especificacion}{sudoku\_resolver}{\Inout t: \matriz{\ent}, \Out tieneSolucion: \bool}
+    \pre{esTableroValido(t) \land t=t_0}
+    \postLargo{
+        (tieneSolucion \yLuego esSubTablero(t_0,t) \land esTotalmeneResuelto(t)) \oLuego \\ 
+        (\neg tieneSolucion \yLuego \neg tableroTieneSolucion(t_0) \land (t=t_0))
+    }
+\end{especificacion} 
+            
+\item
+
+\begin{especificacion}{sudoku\_copiarTablero}{\In src: \matriz{\ent}, \Out  target: \matriz{\ent}}{}{}
+    \pre{esTableroValido(src)}
+    \post{src=target}
+\end{especificacion} 
+
+\end{enumerate}
+
+\section{Predicados y Auxiliares generales}
+
+{
+    \addtolength{\leftskip}{4em}%
+    \addtolength{\parindent}{-3em}%
+    
+    \pred{esTamanoValido}{t: \matriz{\ent}}{
+        (\longitud{t}=9) \land (\forall \ f: \ent)(0 \leq f < \longitud{t} \implicaLuego \longitud{t[f]} = 9)        
+    }
+    
+    \vspace{1em}
+    
+    \pred{elementosValidos}{t: \matriz{\ent}}{
+        (\forall \ f: \ent) (0 \leq f < \longitud{t} \Then (\forall \ c: \ent) (0 \leq c < \longitud{t[f]} \implicaLuego 0 \leq t[f][c] \leq 9))
+    }
+
+    \vspace{1em}
+    
+    \newpage
+    
+    \pred{esTableroValido}{t: \matriz{\ent}}{
+            esTamanoValido (t) \land elementosValidos (t)
+    }
+    
+    \vspace{1em}
+    
+     \aux{cantCeldasVacias}{t: \matriz{\ent}}{\ent}{
+        \sum_{f=0}^{\longitud{t}-1} (\sum_{c=0}^{\longitud{t[f]}-1}\IfThenElse{t[f][c]=0}{1}{0})
+    }
+    
+    \vspace{1em}
+    
+    \pred{filasSinRepetidos}{t: \matriz{\ent}}{
+        \paraTodo{f: \ent}{
+            0 \leq f < 9 \Then \\
+            \neg 
+            (\existe{c_0: \ent}{
+                0 \leq c_0 < 9 \land 
+                \existe{c_1: \ent}{
+                    (0 \leq c_1 < 9 \land c_0 \neq c_1) \yLuego \neg(t[f][c_0] = 0 \land t[f][c_1] = 0) \land t[f][c_0] = t[f][c_1] 
+                }
+            })
+        }
+    }
+    
+    \vspace{1em}
+    
+    \pred{columnasSinRepetidos}{t: \matriz{\ent}}{
+        \paraTodo{c: \ent}{
+            0 \leq c < 9 \Then \\
+            \neg 
+            (\existe{f_0: \ent}{
+                0 \leq f_0 < 9 \land 
+                \existe{f_1: \ent}{
+                    (0 \leq f_1 < 9 \land f_0 \neq f_1) \yLuego \neg(t[f_0][c] = 0 \land t[f_1][c] = 0) \land t[f_0][c] = t[f_1][c]
+                }
+            })
+        }
+    }
+    
+    \vspace{1em}
+    
+    \emph{/* Devuelve la fila superior (primer fila) de una región comprendida entre 1 y 9 */}
+    
+    \fun{desdeFila}{r: \ent}{\ent}{((r-1) \ \division \ 3)*3}
+    
+    \vspace{1em}
+    
+    \emph{/* Devuelve la primer columna de una región comprendida entre 1 y 9 */}
+    
+    \fun{desdeColumna}{r: \ent}{\ent}{((r-1) \ \modulo \ 3)*3}
+    
+    \vspace{1em}
+    
+    \pred{esRegionSinRepetidos}{t: \matriz{\ent}, r: \ent}{
+        \neg(
+        \existe{f_0: \ent}{
+            desdeFila(r) \leq f_0 < desdeFila(r) + 3  \land
+            \existe{c_0: \ent}{
+                desdeCol(r) \leq c_0 < desdeCol(r) + 3 \land \vspace{0.5em} \\
+                \existe{f_1: \ent}{
+                    desdeFila(r) \leq f_1 < desdeFila(r) + 3 \land 
+                    \existe{c_1: \ent}{
+                        desdeCol(r) \leq c_1 < desdeCol(r) + 3 \land \vspace{0.5em} \\
+                        (f_0 \neq f_1) \land (c_0 \neq c_1) \yLuego \neg(t[f_0][c_0] = 0 \land t[f_1][c_1] = 0) \land t[f_0][c_0] = t[f_1][c_1]
+                    }
+                }
+            }
+        })
+    }
+    
+    \vspace{1em}
+    
+    \pred{regionesSinRepetidos}{t: \matriz{\ent}}{
+        (\forall \ r: \ent)(1 \leq r \leq 9 \implicaLuego esRegionSinRepetidos(t, r))
+    }
+    
+    \vspace{1em}
+
+    \pred{tableroSinRepetidos}{t: \matriz{\ent}}{
+        filasSinRepetidos(t) \land columnasSinRepetidos(t) \land regionesSinRepetidos(t)
+    }
+    
+    \vspace{1em}
+    
+    \pred{esTotalmenteResuelto}{t: \matriz{\ent}}{
+        (cantCeldasVacias(t) = 0) \land tableroSinRepetidos(t) 
+    }
+    
+    \vspace{1em}
+    
+    \pred{esSubTablero}{\subind{t_0,t_1}: \matriz{\ent}}{
+        (\forall \ f : \ent)(0\leq f<9 \implicaLuego ( 
+            \forall \ c : \ent)(0 \leq c < 9 \implicaLuego t_0[f][c]=0 \lor \subind{t_0}[f][c]=t_1[f][c])
+        )
+    }
+    
+    \vspace{1em}
+        
+    \pred{tableroTieneSolucion}{t: \matriz{\ent}}{
+        (\exists \ t_0 : \matriz{\ent})(esTotalmenteResuelto(t_0) \land esSubTablero(t,t_0))
+    }
+}
+
+\section{Decisiones tomadas}
+
+    \begin{itemize}
+        \item En el ejercicio 3, se considera como tablero totalmente resuelto a un tablero sin celdas vacias y no necesariamente resuelto.
+        \item Para el predicado {\normalfont\ttfamily regionesSinRepetidos} (Ejercicio 9) se tomó la decisión de enumerar las regiones del tablero del 1 al 9, comenzando desde la parte superior izquierda del tablero hasta la parte inferior derecha.   
+        \item En los ejercicios 13 y 14 se decidió que la especificación considere el tablero de entrada como válido, considerando que se trabaja en el contexto de tableros de dimensión 9x9 (sudokus).  
+    \end{itemize}
+    
+\end{document}
